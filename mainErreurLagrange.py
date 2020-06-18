@@ -52,3 +52,4 @@ def erreurLagrangeParametre(a,b,n,k):
 
     erreur =sqrt(Dreal**2+Dim**2)
     print("L'erreur est de : ", erreur)
+    return erreur

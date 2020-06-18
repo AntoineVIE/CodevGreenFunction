@@ -5,7 +5,7 @@ import sys
 import getopt
 import sympy as sp
 from scipy.interpolate import lagrange as lg
-
+from numpy.polynomial import Polynomial
 
 """Cette fonction est l'interpolation
 de Lagrange qui nous servira sur la 
@@ -14,19 +14,22 @@ Green Function"""
 
 def lagrange(f,a,b,n,k):
     #Création de l'ensemble des valeurs de r
-    x=np.linspace(a,b,n+1)
+    x=np.linspace(a,b,n)
+    
     #Initialisation du polynome
-    X=np.poly1d([1,0])
-    P=0
+    X=Polynomial([0,1])
+    P=Polynomial([0])
     #Création du Polynome
-    for i in range(n+1):
-        L=1
-        for j in range (0,i):
-            L=L*(X-x[j])/(x[i]-x[j])
-        for j in range (i+1, n+1):
-            L=L*(X-x[j])/(x[i]-x[j])
+    for j in range(n):
+        L=Polynomial([1,0])
+        for m in range (0,j):
+            L=L*(X-x[m])/(x[j]-x[m])
+        for m in range (j+1, n):
+            L=L*(X-x[m])/(x[j]-x[m])
     #Formule d'interpolation
-        P=P+L*f(k,x[i])
+        P=P+L*f(k,x[j])
+
+        
     return P
 
 """Cette fonction nous donnera l'erreur 
@@ -71,16 +74,28 @@ def fact(n):
     else:
         return n*fact(n-1)
 
-def linear(f,a,b,n,k):
-    #Création de l'ensemble des valeurs de r
-    x=np.linspace(a,b,n+2) 
-    #Initialisation du polynome
-    X=np.poly1d([1,0])
-    L=0
-    for i in range(n+1):
-        P=(X-x[i+1])/(x[i]-x[i+1])
-        L=L+P*f(k,x[i])
-    return L
+def interpolLin(x, y):
+    #x est le linspace sur le nombre de points à sampler
+    #y est la fonction samplée 
+        def interpFn(x0):
+            #x0 est le point sur lequel on travaille 
+            if x0 < x[0] or x0 > x[-1]:
+                raise BaseException
+            elif x0 == x[0]:
+                return y[0]
+            elif x0 == x[-1]:
+                return y[-1]
+            else:
+                i2 = 0
+                while x0 > x[i2]:
+                    i2 += 1
+                i1 = i2 - 1
+                t = (x0 - x[i1])/(x[i2]-x[i1])
+                return y[i1]*(1-t) + t*y[i2]
+        return interpFn
+
+
+    
 
 def erreurLinear(f,a,b,n):
      #Création de l'ensemble des valeurs de r

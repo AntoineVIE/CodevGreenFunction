@@ -11,7 +11,7 @@ import mainErreurLagrange as melg
 import mainErreurLinear as mel
 
 def accel(t1,t2):
-    return(t2*100/t1)
+    return(100-t2*100/t1)
 
 def temps(t1,t2):
     return(t2-t1)
